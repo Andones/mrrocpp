@@ -38,7 +38,6 @@ const char* State::getStateID() const
 {
 	return id.c_str();
 }
-
 //-----------------------------------------------------------------------------------------------------------
 
 void State::setNumArgument(const std::string & numArgument)
@@ -68,6 +67,7 @@ const std::string & State::getType() const
 }
 
 //-----------------------------------------------------------------------------------------------------------
+
 
 void State::setRobot(const std::string & _robot)
 {
@@ -105,7 +105,7 @@ void State::setGeneratorType(const std::string & genType)
 	else if (genType == "ECP_GEN_WEIGHT_MEASURE")
 		this->generatorType = ecp_mp::generator::ECP_GEN_WEIGHT_MEASURE;
 	else if (genType == "ECP_TOOL_CHANGE_GENERATOR")
-		this->generatorType = ecp_mp::generator::ECP_GEN_FORCE_TOOL_CHANGE;
+        this->generatorType = ecp_mp::generator::ECP_GEN_FORCE_TOOL_CHANGE;
 	// TODO: unknown generatorType handler should throw an exception
 }
 

@@ -35,6 +35,7 @@ add_subdirectory (trajectory_stats)
 add_subdirectory (en_labyrinth)
 add_subdirectory (imu)
 add_subdirectory (tp_pick)
+add_subdirectory (hswitals)
 endif(ROBOTS_012)
 
 if(ROBOT_BIRD_HAND)
