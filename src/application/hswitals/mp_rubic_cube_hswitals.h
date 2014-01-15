@@ -1,14 +1,7 @@
-// -------------------------------------------------------------------------
-//                            mp_task_rcsc.h
-// Definicje struktur danych i metod dla procesow MP - zadanie ukladania kostki Rubika
-//  wersja z generatorami uruchaminami na poziomie ECP
-// Ostatnia modyfikacja: 2006
-// -------------------------------------------------------------------------
+#if !defined(__MP_T_HSWITALS_GENERATORE_H)
+#define __MP_T_HSWITALS_GENERATORE_H
 
-#if !defined(__MP_TASK_RCSC_H)
-#define __MP_TASK_RCSC_H
-
-#include "application/rcsc/ecp_mp_t_rcsc.h"
+#include "base/mp/mp_task.h"
 
 namespace mrrocpp {
 namespace mp {

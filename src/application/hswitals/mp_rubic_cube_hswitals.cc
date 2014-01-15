@@ -20,17 +20,16 @@
 #include "robot/irp6ot_m/const_irp6ot_m.h"
 
 #include "generator/ecp/bias_edp_force/ecp_mp_g_bias_edp_force.h"
-//#include "generator/ecp/tff_nose_run/ecp_mp_g_tff_nose_run.h"
+#include "generator/ecp/tff_nose_run/ecp_mp_g_tff_nose_run.h"
 #include "generator/ecp/newsmooth/ecp_mp_g_newsmooth.h"
 #include "generator/ecp/constant_velocity/ecp_mp_g_constant_velocity.h"
 #include "generator/ecp/weight_measure/ecp_mp_g_weight_measure.h"
 
-#include "generator/ecp/hswitals_generatore/ecp_mp_g_hswitals_generatore.h"
 #include "generator/ecp/force_tool_change/ecp_mp_g_force_tool_change.h"
 #include "generator/ecp/tff_gripper_approach/ecp_mp_g_tff_gripper_approach.h"
 #include "generator/ecp/tff_rubik_face_rotate/ecp_mp_g_tff_rubik_face_rotate.h"
 
-#include "ecp_mp_g_hswitals_generatore.h"
+#include "generator/ecp/hswitals_generatore/ecp_mp_g_hswitals_generatore.h"
 
 #include "robot/irp6ot_m/mp_r_irp6ot_m.h"
 #include "robot/irp6ot_tfg/mp_r_irp6ot_tfg.h"
@@ -67,9 +66,9 @@ void rubik_cube::main_task_algorithm(void)
 //        set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(), lib::irp6ot_m::ROBOT_NAME);
 //        sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(), lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
-/*
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(), lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
+
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.075, lib::irp6ot_tfg::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
     sr_ecp_msg->message("--------Rozluznienie chwytaka DONE--------");
@@ -82,58 +81,58 @@ void rubik_cube::main_task_algorithm(void)
 
     //wait_ms(2000);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_SMOOTH_JOINT_FILE_FROM_MP, (int) lib::RELATIVE, "../../src/application/hswitals/trj/irp6ot_cube_approach.trj", lib::irp6ot_m::ROBOT_NAME);
+    set_next_ecp_state(ecp_mp::generator::ECP_GEN_SMOOTH_ANGLE_AXIS_FILE_FROM_MP, (int) lib::RELATIVE, "../../src/application/hswitals/trj/irp6ot_cube_approach.trj", lib::irp6ot_m::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Podjazd do kostki DONE--------");
 
-//    wait_ms(10000);
+    wait_ms(5000);
 
     configure_edp_force_sensor();
 
    // send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(false, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
-
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(false, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
 //    sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.068, lib::irp6ot_tfg::ROBOT_NAME);
+    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
+    sr_ecp_msg->message("--------Podatnosc w osiach x i y DONE--------");
+
+    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.0565, lib::irp6ot_tfg::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
     send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Zaciskanie do 0.068 DONE--------");
 
     //wait_ms(2000);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
 
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::behaviour_specification, ecp_mp::generator::hswitals_generatore::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
-//    sr_ecp_msg->message("--------Podatnosc w osi x DONE--------");
+////    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
+////    sr_ecp_msg->message("--------Podatnosc w osiach x i y DONE--------");
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.0565, lib::irp6ot_tfg::ROBOT_NAME);
-    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
-    send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Zaciskanie do 0.0565 DONE--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.0565, lib::irp6ot_tfg::ROBOT_NAME);
+//    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
+//    send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Zaciskanie do 0.0565 DONE--------");
 
-//    wait_ms(10000);
+//    wait_ms(500);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_RUBIK_FACE_ROTATE, (int) ecp_mp::generator::RCSC_CCL_90, "", lib::irp6ot_m::ROBOT_NAME);
-    wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Obrot DONE--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_RUBIK_FACE_ROTATE, (int) ecp_mp::generator::RCSC_CCL_90, "", lib::irp6ot_m::ROBOT_NAME);
+//    wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Obrot DONE--------");
 
-//    wait_ms(10000);
+////    wait_ms(10000);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.022, lib::irp6ot_tfg::ROBOT_NAME);
-    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
-    sr_ecp_msg->message("--------Rozluznienie chwytu--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::RELATIVE, 0.022, lib::irp6ot_tfg::ROBOT_NAME);
+//    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Rozluznienie chwytu--------");
 
-    //wait_ms(2000);
+//    //wait_ms(2000);
 
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_SMOOTH_JOINT_FILE_FROM_MP, (int) lib::RELATIVE, "../../src/application/hswitals/trj/irp6ot_cube_departure.trj", lib::irp6ot_m::ROBOT_NAME);
-    wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Odjazd od kostki DONE--------");
-    */
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_SMOOTH_ANGLE_AXIS_FILE_FROM_MP, (int) lib::RELATIVE, "../../src/application/hswitals/trj/irp6ot_cube_departure.trj", lib::irp6ot_m::ROBOT_NAME);
+//    wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Odjazd od kostki DONE--------");
+
 }
 
 // powolanie robotow w zaleznosci od zawartosci pliku konfiguracyjnego
