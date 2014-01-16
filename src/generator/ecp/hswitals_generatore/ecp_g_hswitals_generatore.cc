@@ -175,15 +175,15 @@ bool hswitals_generatore::next_step()
 {
     std::cout<<"next step"<<std::endl;
 
-    static bool start_changing_divisor_y = false;
+//    static bool start_changing_divisor_y = false;
 
-    double current_irp6ot_force_x;
-    double current_irp6ot_force_y;
-    double current_irp6ot_force_z;
+//    double current_irp6ot_force_x;
+//    double current_irp6ot_force_y;
+//    double current_irp6ot_force_z;
 
-    current_irp6ot_force_x = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[0];
-    current_irp6ot_force_y = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[1];
-    current_irp6ot_force_z = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[2];
+//    current_irp6ot_force_x = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[0];
+//    current_irp6ot_force_y = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[1];
+//    current_irp6ot_force_z = the_robot->reply_package.arm.pf_def.force_xyz_torque_xyz[2];
 
     //	std::cout << "tff_nose_run" << node_counter << std::endl;
     // Generacja trajektorii prostoliniowej o zadany przyrost polozenia i orientacji
@@ -215,39 +215,39 @@ bool hswitals_generatore::next_step()
         std::cout << "force measured: " << force_torque << std::endl;
     }
 
-    if (current_irp6ot_force_y > 10.0) {
-        start_changing_divisor_y = true;
+//    if (current_irp6ot_force_y > 10.0) {
+//        start_changing_divisor_y = true;
 
-    }
+//    }
 
-    if (start_changing_divisor_y) {
+//    if (start_changing_divisor_y) {
 
-        if (node_counter % 1000 == 0) {
+//        if (node_counter % 1000 == 0) {
 
-            divisor_y *= 2;
+//            divisor_y *= 2;
 
-            std::stringstream ss(std::stringstream::in | std::stringstream::out);
+//            std::stringstream ss(std::stringstream::in | std::stringstream::out);
 
-            ss << "divisor: " << divisor_y;
+//            ss << "divisor: " << divisor_y;
 
-            sr_ecp_msg.message(ss.str().c_str());
+//            sr_ecp_msg.message(ss.str().c_str());
 
-        }
+//        }
 
-    }
+//    }
 
-        the_robot->ecp_command.arm.pf_def.reciprocal_damping[1] = 2 * lib::FORCE_RECIPROCAL_DAMPING / (divisor_y);
-        //the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 2 * lib::FORCE_RECIPROCAL_DAMPING;
-        the_robot->ecp_command.arm.pf_def.inertia[1] = 2 * lib::FORCE_INERTIA / divisor_y;
-        //the_robot->ecp_command.arm.pf_def.inertia[i] = 2 * lib::FORCE_INERTIA;
+//        //the_robot->ecp_command.arm.pf_def.reciprocal_damping[1] = 2 * lib::FORCE_RECIPROCAL_DAMPING / (divisor_y);
+//        the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 2 * lib::FORCE_RECIPROCAL_DAMPING;
+//        the_robot->ecp_command.arm.pf_def.inertia[1] = 2 * lib::FORCE_INERTIA / divisor_y;
+//        //the_robot->ecp_command.arm.pf_def.inertia[i] = 2 * lib::FORCE_INERTIA;
 
-    // wypiski
+//    // wypiski
 
-    //	if ((cycle_counter % 10) == 0) {
-    std::cout << "irp6ot_f_y: " << current_irp6ot_force_y << ", divisor: " << divisor_y
-              << "x: " << generator_edp_data.next_behaviour[0]
-              << "y: " << generator_edp_data.next_behaviour[1]
-              << "z: " << generator_edp_data.next_behaviour[2] << std::endl;
+//    //	if ((cycle_counter % 10) == 0) {
+//    std::cout << "irp6ot_f_y: " << current_irp6ot_force_y << ", divisor: " << divisor_y
+//              << "x: " << generator_edp_data.next_behaviour[0]
+//              << "y: " << generator_edp_data.next_behaviour[1]
+//              << "z: " << generator_edp_data.next_behaviour[2] << std::endl;
 
     return true;
 

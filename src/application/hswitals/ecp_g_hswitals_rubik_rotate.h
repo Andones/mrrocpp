@@ -30,6 +30,8 @@ protected:
 	double stored_gamma, turn_angle;
 	bool range_change;
 
+    double divisor[6];
+
 public:
 	const int step_no;
 

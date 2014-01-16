@@ -28,7 +28,7 @@ namespace generator {
 hswitals_rubik_rotate::hswitals_rubik_rotate(common::task::task& _ecp_task, int step) :
 		common::generator::generator(_ecp_task), step_no(step)
 {
-    generator_name = ecp_mp::generator::ECP_GEN_hswitals_rubik_rotate;
+    generator_name = ecp_mp::generator::ECP_GEN_HSWITALS_RUBIK_ROTATE;
 }
 
 void hswitals_rubik_rotate::configure(double l_turn_angle)
@@ -42,6 +42,12 @@ void hswitals_rubik_rotate::configure(double l_turn_angle)
 
 bool hswitals_rubik_rotate::first_step()
 {
+    for (int i = 0; i < 6; i++) {
+        divisor[i] = 1;
+    }
+
+    std::cout << std::endl << "hswitals_rubik_rotate" << node_counter << std::endl << std::endl;
+
 	// Generacja trajektorii prostoliniowej o zadany przyrost polozenia i oreintacji
 	// Funkcja zwraca false gdy koniec generacji trajektorii
 	// Funkcja zwraca true gdy generacja trajektorii bedzie kontynuowana
@@ -105,10 +111,26 @@ bool hswitals_rubik_rotate::first_step()
 
 bool hswitals_rubik_rotate::next_step()
 {
+    //std::cout<<"next step"<<std::endl;
+
+    bool start_changing_divisor[6];
+
+    double current_irp6ot_force[6];
+
+    double current_irp6ot_inertia[6];
+    double current_irp6ot_reciprocal_damping[6];
+
+    for (int i = 0; i < 6; i++) {
+        current_irp6ot_inertia[i] = the_robot->ecp_command.arm.pf_def.inertia[i];
+        current_irp6ot_reciprocal_damping[i] = the_robot->ecp_command.arm.pf_def.reciprocal_damping[i];
+        current_irp6ot_force[i] = the_robot->ecp_command.arm.pf_def.force_xyz_torque_xyz[i];
+        start_changing_divisor[i] = false;
+    }
+
 	// Generacja trajektorii prostoliniowej o zadany przyrost polozenia i orientacji
 	// Funkcja zwraca false gdy koniec generacji trajektorii
 	// Funkcja zwraca true gdy generacja trajektorii bedzie kontynuowana
-	// UWAGA: dzialamy na jednoelementowej liscie robotow
+    // UWAGA: dzialamy na 2jednoelementowej liscie robotow
 	// cout << "next_step" << endl;
 
 	// Przygotowanie kroku ruchu - do kolejnego wezla interpolacji
@@ -123,7 +145,7 @@ bool hswitals_rubik_rotate::next_step()
 			lib::Xyz_Euler_Zyz_vector xyz_eul_zyz;
 			frame.get_xyz_euler_zyz(xyz_eul_zyz);
 			double angle_to_move = (turn_angle / 180.0) * M_PI;
-			if (xyz_eul_zyz[5] + angle_to_move < -M_PI) {
+            if (xyz_eul_zyz[5] + angle_to_move < -M_PI) {
 				stored_gamma = 2 * M_PI + xyz_eul_zyz[5] + angle_to_move;
 				range_change = true;
 			} else if (xyz_eul_zyz[5] + angle_to_move > M_PI) {
@@ -135,9 +157,8 @@ bool hswitals_rubik_rotate::next_step()
 			}
 		}
 	} else {
-
 		if (turn_angle < -0.1 || 0.1 < turn_angle) {
-			lib::Homog_matrix current_frame(the_robot->reply_package.arm.pf_def.arm_frame);
+            lib::Homog_matrix current_frame(the_robot->reply_package.arm.pf_def.arm_frame);
 			lib::Xyz_Euler_Zyz_vector xyz_eul_zyz;
 			current_frame.get_xyz_euler_zyz(xyz_eul_zyz);
 			double current_gamma = xyz_eul_zyz[5];
@@ -156,24 +177,61 @@ bool hswitals_rubik_rotate::next_step()
 
 	}
 
-	return true;
+    std::cout << "counter: " << node_counter << std::endl;
+
+    for (int i = 0; i < 6; i++) {
+        if (current_irp6ot_force[i] > 2.0 || current_irp6ot_force[i] < -2.0) {
+            start_changing_divisor[i] = true;
+
+        }
+
+//        if (current_irp6ot_force[i] > 2.0 || current_irp6ot_force[i] < -2.0) {
+//            start_changing_divisor[i] = true;
+
+//        }
+
+        if (start_changing_divisor[i]) {
+
+                            divisor[i] *= 2;
+
+                std::stringstream ss(std::stringstream::in | std::stringstream::out);
+
+                ss << "divisor " << i << ": " << divisor[i];
+
+                sr_ecp_msg.message(ss.str().c_str());
+
+        }
+
+            //the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 2 * lib::FORCE_RECIPROCAL_DAMPING / (divisor[i]);
+            the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 1.001 * current_irp6ot_reciprocal_damping[i];
+            //the_robot->ecp_command.arm.pf_def.inertia[i] = 2 * lib::FORCE_INERTIA / divisor[i];
+            the_robot->ecp_command.arm.pf_def.inertia[i] = 1.001 * current_irp6ot_inertia[i];
+
+
+        // wypiski
+
+        //	if ((cycle_counter % 10) == 0) {
+    std::cout << i << " inertia: " << current_irp6ot_inertia[i] << ", damping: " << current_irp6ot_reciprocal_damping[i] << std::endl;
+    }
+
+    return true;
 }
 
 void hswitals_rubik_rotate::conditional_execution()
 {
 
-	switch ((ecp_mp::generator::RCSC_TURN_ANGLES) ecp_t.mp_command.ecp_next_state.variant)
+    switch ((ecp_mp::generator::HSWITALS_TURN_ANGLES) ecp_t.mp_command.ecp_next_state.variant)
 	{
-		case ecp_mp::generator::RCSC_CCL_90:
+        case ecp_mp::generator::HSWITALS_CCL_90:
 			configure(-90.0);
 			break;
-		case ecp_mp::generator::RCSC_CL_0:
+        case ecp_mp::generator::HSWITALS_CL_0:
 			configure(0.0);
 			break;
-		case ecp_mp::generator::RCSC_CL_90:
+        case ecp_mp::generator::HSWITALS_CL_90:
 			configure(90.0);
 			break;
-		case ecp_mp::generator::RCSC_CL_180:
+        case ecp_mp::generator::HSWITALS_CL_180:
 			configure(180.0);
 			break;
 		default:

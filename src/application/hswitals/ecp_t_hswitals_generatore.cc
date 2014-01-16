@@ -18,6 +18,7 @@
 #include "generator/ecp/tff_gripper_approach/ecp_g_tff_gripper_approach.h"
 #include "generator/ecp/weight_measure/ecp_g_weight_measure.h"
 #include "generator/ecp/hswitals_generatore/ecp_g_hswitals_generatore.h"
+#include "ecp_g_hswitals_rubik_rotate.h"
 
 // ecp_robots headers
 #include "robot/irp6ot_m/ecp_r_irp6ot_m.h"
@@ -49,6 +50,7 @@ hswitals_generatore::hswitals_generatore(lib::configurator &_config) :
 //	}
 
     register_generator(new generator::hswitals_generatore(*this, 8));
+    register_generator(new generator::hswitals_rubik_rotate(*this, 8));
     register_generator(new generator::sleep(*this));
     register_generator(new generator::transparent(*this));
     register_generator(new generator::bias_edp_force(*this));

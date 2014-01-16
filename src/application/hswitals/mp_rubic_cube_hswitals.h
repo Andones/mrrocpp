@@ -19,6 +19,11 @@ public:
 
     ~rubik_cube();
 
+    void approach_cube(void);
+    void original_task(void);
+    void modified_task(void);
+    void departure_cube(void);
+
 	// methods for mp template
 	void main_task_algorithm(void);
 };
