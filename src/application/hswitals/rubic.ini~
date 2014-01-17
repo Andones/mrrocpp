@@ -2,12 +2,10 @@
 is_active=1
 program_name=mp_rubic_cube_hswitals
 node_name=irp6
-vis_servoing=0
-cube_initial_state=BGROWY
 
 [ecp_irp6ot_m]
 is_active=1
-program_name=ecp_irp6_m
+program_name=ecp_hswitals_generatore
 node_name=irp6
 
 [ecp_irp6ot_tfg]
@@ -29,6 +27,7 @@ node_name=irp6
 force_sensor_test_mode=0
 imu_sensor_test_mode=1
 servo_tryb=0
+reader_samples=50000
 
 adjusted_force_0=1
 adjusted_force_1=1

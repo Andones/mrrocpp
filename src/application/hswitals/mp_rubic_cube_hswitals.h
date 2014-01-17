@@ -7,9 +7,17 @@ namespace mrrocpp {
 namespace mp {
 namespace task {
 
+#define MULTI 8
+#define MULTI_RD 2
+
 class rubik_cube : public task
 {
 public:
+    double f_inertia;
+    double t_inertia;
+    double f_reciprocal_damping;
+    double t_reciprocal_damping;
+
 	/// utworzenie robotow
     void create_robots(void);
     void configure_edp_force_sensor(void);

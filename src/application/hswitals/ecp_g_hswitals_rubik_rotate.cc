@@ -42,9 +42,9 @@ void hswitals_rubik_rotate::configure(double l_turn_angle)
 
 bool hswitals_rubik_rotate::first_step()
 {
-    for (int i = 0; i < 6; i++) {
-        divisor[i] = 1;
-    }
+//    for (int i = 0; i < 6; i++) {
+//        divisor[i] = 1;
+//    }
 
     std::cout << std::endl << "hswitals_rubik_rotate" << node_counter << std::endl << std::endl;
 
@@ -83,7 +83,12 @@ bool hswitals_rubik_rotate::first_step()
 		the_robot->ecp_command.arm.pf_def.inertia[i + 3] = lib::TORQUE_INERTIA;
 	}
 
-	the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = lib::TORQUE_RECIPROCAL_DAMPING / 4;
+    the_robot->ecp_command.arm.pf_def.inertia[0] = lib::FORCE_INERTIA * MULTI;
+    the_robot->ecp_command.arm.pf_def.inertia[1] = lib::FORCE_INERTIA * MULTI;
+    //the_robot->ecp_command.arm.pf_def.inertia[5] = lib::TORQUE_INERTIA * MULTI;
+    //the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = (lib::TORQUE_RECIPROCAL_DAMPING * MULTI_RD) / 4 ;
+
+    the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = lib::TORQUE_RECIPROCAL_DAMPING / 4;
 	the_robot->ecp_command.arm.pf_def.behaviour[5] = lib::CONTACT;
 
 	if (-0.1 < turn_angle && turn_angle < 0.1) {
@@ -91,13 +96,17 @@ bool hswitals_rubik_rotate::first_step()
 			the_robot->ecp_command.arm.pf_def.behaviour[i] = lib::UNGUARDED_MOTION;
 	} else {
 		for (int i = 0; i < 3; i++) {
-			the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = lib::FORCE_RECIPROCAL_DAMPING;
+            the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = lib::FORCE_RECIPROCAL_DAMPING;
+            //the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = lib::FORCE_RECIPROCAL_DAMPING / DIVISOR;
 			the_robot->ecp_command.arm.pf_def.behaviour[i] = lib::CONTACT;
 		}
 		for (int i = 3; i < 5; i++)
 			the_robot->ecp_command.arm.pf_def.behaviour[i] = lib::UNGUARDED_MOTION;
 
-		the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = lib::TORQUE_RECIPROCAL_DAMPING;
+        the_robot->ecp_command.arm.pf_def.reciprocal_damping[0] = lib::FORCE_RECIPROCAL_DAMPING * MULTI_RD;
+        the_robot->ecp_command.arm.pf_def.reciprocal_damping[1] = lib::FORCE_RECIPROCAL_DAMPING * MULTI_RD;
+        the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = lib::TORQUE_RECIPROCAL_DAMPING;
+        //the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = lib::TORQUE_RECIPROCAL_DAMPING * MULTI_RD;
 		the_robot->ecp_command.arm.pf_def.behaviour[5] = lib::CONTACT;
 		the_robot->ecp_command.arm.pf_def.force_xyz_torque_xyz[5] = copysign(2.5, turn_angle);
 	}
@@ -113,9 +122,9 @@ bool hswitals_rubik_rotate::next_step()
 {
     //std::cout<<"next step"<<std::endl;
 
-    bool start_changing_divisor[6];
+//    bool start_changing_divisor[6];
 
-    double current_irp6ot_force[6];
+//    double current_irp6ot_force_x;
 
     double current_irp6ot_inertia[6];
     double current_irp6ot_reciprocal_damping[6];
@@ -123,8 +132,8 @@ bool hswitals_rubik_rotate::next_step()
     for (int i = 0; i < 6; i++) {
         current_irp6ot_inertia[i] = the_robot->ecp_command.arm.pf_def.inertia[i];
         current_irp6ot_reciprocal_damping[i] = the_robot->ecp_command.arm.pf_def.reciprocal_damping[i];
-        current_irp6ot_force[i] = the_robot->ecp_command.arm.pf_def.force_xyz_torque_xyz[i];
-        start_changing_divisor[i] = false;
+        //current_irp6ot_force[i] = the_robot->ecp_command.arm.pf_def.force_xyz_torque_xyz[i];
+        //start_changing_divisor[i] = false;
     }
 
 	// Generacja trajektorii prostoliniowej o zadany przyrost polozenia i orientacji
@@ -179,41 +188,24 @@ bool hswitals_rubik_rotate::next_step()
 
     std::cout << "counter: " << node_counter << std::endl;
 
-    for (int i = 0; i < 6; i++) {
-        if (current_irp6ot_force[i] > 2.0 || current_irp6ot_force[i] < -2.0) {
-            start_changing_divisor[i] = true;
+//    if (node_counter % 1000 == 0) {
+//        divisor[i] *= 2;
+//        std::stringstream ss(std::stringstream::in | std::stringstream::out);
+//        ss << "divisor " << i << ": " << divisor[i];
+//        sr_ecp_msg.message(ss.str().c_str());
+//    }
+if (node_counter % 100 == 0) {
+ //   the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = current_irp6ot_reciprocal_damping[5] / 2;
+//    the_robot->ecp_command.arm.pf_def.reciprocal_damping[1] = 1.01 * current_irp6ot_reciprocal_damping[1];
+//    the_robot->ecp_command.arm.pf_def.reciprocal_damping[5] = 1.01 * current_irp6ot_reciprocal_damping[5];
+ //   the_robot->ecp_command.arm.pf_def.inertia[5] = current_irp6ot_inertia[5] / 2;
+//    the_robot->ecp_command.arm.pf_def.inertia[1] = 1.01 * current_irp6ot_inertia[1];
+//    the_robot->ecp_command.arm.pf_def.inertia[5] = 1.01 * current_irp6ot_inertia[5];
 
-        }
-
-//        if (current_irp6ot_force[i] > 2.0 || current_irp6ot_force[i] < -2.0) {
-//            start_changing_divisor[i] = true;
-
-//        }
-
-        if (start_changing_divisor[i]) {
-
-                            divisor[i] *= 2;
-
-                std::stringstream ss(std::stringstream::in | std::stringstream::out);
-
-                ss << "divisor " << i << ": " << divisor[i];
-
-                sr_ecp_msg.message(ss.str().c_str());
-
-        }
-
-            //the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 2 * lib::FORCE_RECIPROCAL_DAMPING / (divisor[i]);
-            the_robot->ecp_command.arm.pf_def.reciprocal_damping[i] = 1.001 * current_irp6ot_reciprocal_damping[i];
-            //the_robot->ecp_command.arm.pf_def.inertia[i] = 2 * lib::FORCE_INERTIA / divisor[i];
-            the_robot->ecp_command.arm.pf_def.inertia[i] = 1.001 * current_irp6ot_inertia[i];
-
-
-        // wypiski
-
-        //	if ((cycle_counter % 10) == 0) {
-    std::cout << i << " inertia: " << current_irp6ot_inertia[i] << ", damping: " << current_irp6ot_reciprocal_damping[i] << std::endl;
-    }
-
+    std::cout << " inertia x: " << current_irp6ot_inertia[0] << ", damping x: " << current_irp6ot_reciprocal_damping[0]
+              << " inertia y: " << current_irp6ot_inertia[1] << ", damping y: " << current_irp6ot_reciprocal_damping[1]
+              << " inertia az: " << current_irp6ot_inertia[5] << ", damping az: " << current_irp6ot_reciprocal_damping[5] << std::endl;
+}
     return true;
 }
 

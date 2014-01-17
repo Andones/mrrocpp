@@ -17,6 +17,9 @@ namespace ecp {
 namespace common {
 namespace generator {
 
+#define MULTI 8
+#define MULTI_RD 2
+
 // --------------------------------------------------------------------------
 // Generator do obracania sciany kostki
 
@@ -30,7 +33,7 @@ protected:
 	double stored_gamma, turn_angle;
 	bool range_change;
 
-    double divisor[6];
+    //double divisor[6];
 
 public:
 	const int step_no;

@@ -36,6 +36,9 @@
 #include "robot/irp6ot_tfg/mp_r_irp6ot_tfg.h"
 
 
+#include "robot/irp6p_m/const_irp6p_m.h"
+#include "robot/irp6p_m/mp_r_irp6p_m.h"
+
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -69,13 +72,21 @@ void rubik_cube::approach_cube(void)
     wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Podjazd z pozycji wyjscowej DONE--------");
 
+    configure_edp_force_sensor();
+
+    wait_ms(2000);
+
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_SMOOTH_ANGLE_AXIS_FILE_FROM_MP, (int) lib::RELATIVE, "../../src/application/hswitals/trj/irp6ot_cube_approach.trj", lib::irp6ot_m::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Podjazd do kostki DONE--------");
+
+    configure_edp_force_sensor();
 }
 
 void rubik_cube::departure_cube(void)
 {
+    configure_edp_force_sensor();
+
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::RELATIVE, 0.022, lib::irp6ot_tfg::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
     sr_ecp_msg->message("--------Rozluznienie chwytu--------");
@@ -91,16 +102,6 @@ void rubik_cube::original_task(void)
 
     configure_edp_force_sensor();
 
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
-//    sr_ecp_msg->message("--------Podatnosc w osi y DONE--------");
-
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.065, lib::irp6ot_tfg::ROBOT_NAME);
-//    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
-//    send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
-//    sr_ecp_msg->message("--------Zaciskanie do 0.068 DONE--------");
-
-    //wait_ms(2000);
-
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_NOSE_RUN, (int) ecp_mp::generator::tff_nose_run::behaviour_specification, ecp_mp::generator::tff_nose_run::behaviour_specification_data_type(true, true, false, false, false, false), lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
 
@@ -109,11 +110,17 @@ void rubik_cube::original_task(void)
     send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Zaciskanie do 0.0565 DONE--------");
 
+    configure_edp_force_sensor();
+
     wait_ms(5000);
+
+    configure_edp_force_sensor();
 
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_TFF_RUBIK_FACE_ROTATE, (int) ecp_mp::generator::RCSC_CCL_90, "", lib::irp6ot_m::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Obrot DONE--------");
+
+    wait_ms(5000);
 
     sr_ecp_msg->message("Original_task ENDOK");
 }
@@ -124,29 +131,27 @@ void rubik_cube::modified_task(void)
 
     configure_edp_force_sensor();
 
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(false, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
-//    sr_ecp_msg->message("--------Podatnosc w osi y DONE--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, f_inertia, f_inertia, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, t_inertia, f_reciprocal_damping, f_reciprocal_damping, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, t_reciprocal_damping), lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
 
-//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.065, lib::irp6ot_tfg::ROBOT_NAME);
-//    wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
-//    send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
-//    sr_ecp_msg->message("--------Zaciskanie do 0.068 DONE--------");
+//    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, (lib::TORQUE_INERTIA * MULTI), lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, (lib::TORQUE_RECIPROCAL_DAMPING * MULTI_RD)), lib::irp6ot_m::ROBOT_NAME);
+//    sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
 
-    //wait_ms(2000);
-
-    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
-    sr_ecp_msg->message("--------Podatnosc w osiach x i y DONE--------");
+    set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_GENERATORE, (int) ecp_mp::generator::hswitals_generatore::specification, ecp_mp::generator::hswitals_generatore::specification_data_type(true, true, false, false, false, false, (lib::FORCE_INERTIA * MULTI), (lib::FORCE_INERTIA * MULTI), lib::FORCE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, lib::TORQUE_INERTIA, (lib::FORCE_RECIPROCAL_DAMPING * MULTI_RD), (lib::FORCE_RECIPROCAL_DAMPING * MULTI_RD), lib::FORCE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING, lib::TORQUE_RECIPROCAL_DAMPING), lib::irp6ot_m::ROBOT_NAME);
+    sr_ecp_msg->message("--------Podatnosci w osiach x i y DONE--------");
 
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_CONSTANT_VELOCITY, (int) lib::ABSOLUTE, 0.0565, lib::irp6ot_tfg::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_tfg::ROBOT_NAME);
     send_end_motion_to_ecps(lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Zaciskanie do 0.0565 DONE--------");
 
-    wait_ms(5000);
+    configure_edp_force_sensor();
 
     set_next_ecp_state(ecp_mp::generator::ECP_GEN_HSWITALS_RUBIK_ROTATE, (int) ecp_mp::generator::HSWITALS_CCL_90, "", lib::irp6ot_m::ROBOT_NAME);
     wait_for_task_termination(false, lib::irp6ot_m::ROBOT_NAME);
     sr_ecp_msg->message("--------Obrot DONE--------");
+
+    configure_edp_force_sensor();
 
     sr_ecp_msg->message("Modified_task ENDOK");
 }
@@ -156,14 +161,10 @@ void rubik_cube::main_task_algorithm(void)
     sr_ecp_msg->message("Zaczynamy");
 
     approach_cube();
-
-    wait_ms(500);
-
-    original_task();
-    //modified_task();
-
-    wait_ms(5000);
-
+wait_ms(2000);
+    //original_task();
+    modified_task();
+wait_ms(2000);
     departure_cube();
 }
 
@@ -172,6 +173,7 @@ void rubik_cube::create_robots()
 {
 	ACTIVATE_MP_ROBOT(irp6ot_tfg);
     ACTIVATE_MP_ROBOT(irp6ot_m);
+    //ACTIVATE_MP_ROBOT(irp6p_m);
 }
 
 task* return_created_mp_task(lib::configurator &_config)
